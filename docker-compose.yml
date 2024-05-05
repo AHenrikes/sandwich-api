@@ -1,0 +1,82 @@
+# Install Docker and Docker compose
+# After you have Docker and Docker Compose installed, run this file with:
+# `docker-compose up --build`
+
+version: "3"
+
+services:
+  server-a:
+    image: sandwich/node-swagger:3a
+    # 'depends_on' and 'command' are to be used when used with RabbitMQ service.
+    # 'depends_on' must be setvto RabbitMQ service's name from this file, 
+    # and 'command' can be modified to be anything, but what is given should work.
+    depends_on:
+      - rapid-runner-rabbit
+    command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "--", "npm", "start"]
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/server-a
+    ports:
+      - "8080:8080"
+    environment:
+      ENCRYPTION_KEY: idclip
+    networks:
+      - backend
+
+  rapid-runner-rabbit:
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+    expose:
+      - "5672"
+    networks:
+      - backend
+
+  # A timeout of 300 seconds is set for server-b wait-for-it.sh script
+  # because it defaults to 15 seconds, which was not always enough.
+  server-b:
+    image: sandwich/node-swagger:3b
+    depends_on:
+      - server-a
+    command: ["./utils/wait-for-it.sh", "rapid-runner-rabbit:5672", "-t", "300", "--", "npm", "start"]
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/server-b
+    expose:
+      - "8081:8081"
+    networks:
+      - backend
+
+  frontend:
+    image: frontend:Nextjs
+    depends_on:
+      - database
+    command: ["npm", "run", "dev"]
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    ports:
+     - "3000:3000"
+    networks:
+      - backend
+
+  # database
+  database:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - ./backend/db-init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+
+# Here i created a named network, that all the backend components
+# must be added to for them to be able to communicate through
+networks:
+  backend:
+  

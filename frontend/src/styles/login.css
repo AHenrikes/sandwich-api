@@ -1,0 +1,18 @@
+.form {
+
+  aside {
+    position: absolute;
+    left: 150px;
+    height: 100vh;
+    padding-top: 100px;
+    background-color: #fff;
+
+    .cl-internal-17ydaof {
+      box-shadow: none;
+    }
+
+    .cl-internal-b3fm6y {
+      display: none;
+    }
+  }
+}

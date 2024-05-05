@@ -1,0 +1,25 @@
+{
+  "name": "make-me-a-sandwich",
+  "version": "1.1.0",
+  "description": "This is the Swagger 2.0 API for Web Architectures project work. ",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "amqplib": "0.10.3",
+    "connect": "^3.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "js-yaml": "^3.3.0",
+    "mongoose": "^8.2.4",
+    "pg": "^8.11.5",
+    "swagger-tools": "0.10.1"
+  }
+}
