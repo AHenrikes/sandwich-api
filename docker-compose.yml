@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
       context: ./backend/server-a
     ports:
-      - "8080/tcp"
+      - "8080/8080"
     environment:
       ENCRYPTION_KEY: idclip
     networks:
@@ -43,7 +43,7 @@ services:
       dockerfile: Dockerfile
       context: ./backend/server-b
     expose:
-      - "8081:8081"
+      - "8081:tcp"
     networks:
       - backend
 
