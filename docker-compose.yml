@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
       context: ./backend/server-a
     ports:
-      - "8080:8080"
+      - "8080/tcp"
     environment:
       ENCRYPTION_KEY: idclip
     networks:
