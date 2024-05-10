@@ -32,8 +32,9 @@ jobs:
         working-directory: .
 
       - name: Build and push database image
-        run: docker pull postgres:latest
-             docker tag postgres:latest ${{ secrets.DOCKER_USERNAME }}/database:latest
+        run: |
+            docker pull postgres:latest
+            docker tag postgres:latest ${{ secrets.DOCKER_USERNAME }}/database:latest
         working-directory: .
       
       - name: Deploy with Docker Compose
