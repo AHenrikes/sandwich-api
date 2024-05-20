@@ -9,14 +9,26 @@ const BACKEND_PORT = 8080;
 const ENV_SERVER_A_URL = process.env.NEXT_PUBLIC_APP_SERVER_A_URL;
 const SANDWICH_URL = ENV_SERVER_A_URL ? ENV_SERVER_A_URL + "/v1/sandwich" : "http://localhost:" + BACKEND_PORT + "/v1/sandwich";
 
+interface Topping {
+    id: number;
+    name: string;
+}
+
+interface Data {
+    id: string;
+    name: string;
+    toppings: Topping[];
+    breadType: string;
+}
+
 const SandwichPoster = () => {
     const { user } = useUser();
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<Data | null>(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [allToppings, setAllToppings] = useState(null);
+    const [error, setError] = useState<Error | null>(null);
+    const [allToppings, setAllToppings] = useState<Topping[] | null>(null);
     const [sandwichName, setSandwichName] = useState("");
-    const [toppings, setToppings] = useState([]);
+    const [toppings, setToppings] = useState<Topping[]>([]);
     const [breadType, setBreadType] = useState("oat");
     const [flashPost, setFlashPost] = useState(false);
 
@@ -31,7 +43,7 @@ const SandwichPoster = () => {
         getToppings().then(data => setAllToppings(data));
     }, []);
 
-    const handleToppingsChange = (event) => {
+    const handleToppingsChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedOptions = Array.from(event.target.selectedOptions, option => ({
             id: parseInt(option.value),
             name: option.text
@@ -55,10 +67,10 @@ const SandwichPoster = () => {
         setLoading(true);
 
         const sandwich = {
-            "name": sandwichName,
-            "toppings": toppings,
-            "breadType": breadType
-        }
+            name: sandwichName,
+            toppings: toppings,
+            breadType: breadType
+        };
 
         fetch(SANDWICH_URL, {
             method: 'POST',
@@ -66,28 +78,24 @@ const SandwichPoster = () => {
                 'Content-Type': 'application/json',
                 'api_key': apikey
             },
-            body: JSON.stringify(sandwich) // Sandwich object as the required parameter in the request body
+            body: JSON.stringify(sandwich)
         })
             .then(response => {
-                // console.log(response.status);
                 if (!response.ok) {
                     return response.text().then(text => {
                         return text ? JSON.parse(text) : {};
                     }).then(err => {
-                        throw new Error(`${response.status}` +
-                            `, ${err.message || '-'}`);
+                        throw new Error(`${response.status}, ${err.message || '-'}`);
                     });
                 }
-                return response.text().then(text => text ? JSON.parse(text) : {});
+                return response.json();
             })
             .then(data => {
                 setData(data);
-                console.log(data);
                 setLoading(false);
             })
             .catch(error => {
-                setError(error)
-                console.error(error);
+                setError(error);
                 setData(null);
                 setLoading(false);
             });
@@ -102,29 +110,46 @@ const SandwichPoster = () => {
                 <h1>Sandwich Poster</h1>
 
                 <div>
-                    <input type="text" value={sandwichName} onChange={e => setSandwichName(e.target.value)} placeholder="Sandwich Name" />
+                    <input
+                        type="text"
+                        value={sandwichName}
+                        onChange={e => setSandwichName(e.target.value)}
+                        placeholder="Sandwich Name"
+                    />
 
-                    <select multiple={true} value={toppings.map(topping => topping.id)} onChange={handleToppingsChange}>
-                        {/* Check that allToppings has been fetched, and only then map them to the menu options */}
-                        {allToppings && allToppings.map((topping) => (
-                            <option key={topping.id} value={topping.id}>{topping.name}</option>
+                    <select
+                        multiple={true}
+                        value={toppings.map(topping => topping.id.toString())}
+                        onChange={handleToppingsChange}
+                    >
+                        {allToppings?.map(topping => (
+                            <option key={topping.id} value={topping.id.toString()}>
+                                {topping.name}
+                            </option>
                         ))}
                     </select>
 
-                    <select value={breadType} onChange={e => setBreadType(e.target.value)}>
+                    <select
+                        value={breadType}
+                        onChange={e => setBreadType(e.target.value)}
+                    >
                         <option value="oat">Oat</option>
-
                         <option value="rye">Rye</option>
-
                         <option value="wheat">Wheat</option>
                     </select>
 
-                    <button className={flashPost ? 'flash' : ''} onClick={handleButtonClick} disabled={loading}>Add Sandwich</button>
+                    <button
+                        className={flashPost ? 'flash' : ''}
+                        onClick={handleButtonClick}
+                        disabled={loading}
+                    >
+                        Add Sandwich
+                    </button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateRows: 'repeat(3, 25px)' }}>
                     {loading && <div>Loading...</div>}
-                    {error && (<div>{`Problem adding sandwich: ${error}`}</div>)}
+                    {error && (<div>{`Problem adding sandwich: ${error.message}`}</div>)}
                     {data && (
                         <div>
                             <table>
@@ -141,7 +166,7 @@ const SandwichPoster = () => {
                                     <tr>
                                         <td>{data.id}</td>
                                         <td>{data.name}</td>
-                                        <td>{data.toppings ? data.toppings.map(topping => topping.toppingId).join(', ') : ''}</td>
+                                        <td>{data.toppings.map(topping => topping.name).join(', ')}</td>
                                         <td>{data.breadType}</td>
                                     </tr>
                                 </tbody>

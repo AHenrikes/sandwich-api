@@ -6,9 +6,13 @@ const BACKEND_PORT = 8080;
 const ENV_SERVER_A_URL = process.env.NEXT_PUBLIC_APP_SERVER_A_URL;
 const ORDER_URL = ENV_SERVER_A_URL ? ENV_SERVER_A_URL + "/v1/order" : "http://localhost:" + BACKEND_PORT + "/v1/order";
 
-const OrderPoster = (props) => {
+interface OrderResponse {
+    status: string;
+}
+
+const OrderPoster = (props: any) => {
     const selectedItem = props.selectedItem;
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<OrderResponse | null>(null);
     const [error, setError] = useState(null);
 
     const [showOrder, setShowOrder] = useState(false);
