@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import "@/styles/dashboard.css";
+import "./dashboard.css";
 import { Protect, useUser } from "@clerk/nextjs";
 import PageNotFoundError from "@/components/404";
 

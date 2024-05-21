@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1 {
+  font-size: 2rem;
+  line-height: 2.5rem;
+}
+
+body {
+  background-color: #a4a4a4;
+  height: 100vh;
+}
+
+/* clerk */
+.cl-card {
+  .cl-userButtonPopoverFooter {
+    display: none;
+  }
+}
+
+header {
+  display: flex;
+  position: absolute;
+  justify-content: space-between;
+  align-items: center;
+  width: 100vw;
+  height: 80px;
+}
+
+main {
+  padding-top: 80px;
+  height: 100vh;
+
+  section {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    height: 100%;
+
+    aside {
+      border-right: 1px solid rgba(255, 255, 255, 0.5);
+      height: 100%;
+    }
+  }
+}

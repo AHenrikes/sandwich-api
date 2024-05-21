@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import OrderPoster from './OrderPoster';
 import OrderGetter from './OrderGetter';
-import "@/styles/page.css";
+import "./page.css";
 
 const BACKEND_PORT = 8080;
 const ENV_SERVER_A_URL = process.env.NEXT_PUBLIC_APP_SERVER_A_URL;
