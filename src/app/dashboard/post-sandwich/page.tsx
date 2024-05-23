@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Protect, useUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 import { determineApiKey } from '../../../api/determineApiKey';
 import { getToppings } from '../../../api/getToppings';
 
@@ -31,9 +31,6 @@ const SandwichPoster = () => {
     const [toppings, setToppings] = useState<Topping[]>([]);
     const [breadType, setBreadType] = useState("oat");
     const [flashPost, setFlashPost] = useState(false);
-
-    const role = user?.organizationMemberships.map(e => e.role) ?? [];
-    const admin = role[0] === "org:admin";
 
     // Determine API key based on role
     const apikey = determineApiKey(user);
@@ -103,78 +100,73 @@ const SandwichPoster = () => {
 
     return (
         <div className="SandwichPoster">
-            <Protect
-                condition={() => admin}
-                fallback={<p>checking permissions</p>}>
+            <h1>Sandwich Poster</h1>
 
-                <h1>Sandwich Poster</h1>
+            <div>
+                <input
+                    type="text"
+                    value={sandwichName}
+                    onChange={e => setSandwichName(e.target.value)}
+                    placeholder="Sandwich Name"
+                />
 
-                <div>
-                    <input
-                        type="text"
-                        value={sandwichName}
-                        onChange={e => setSandwichName(e.target.value)}
-                        placeholder="Sandwich Name"
-                    />
+                <select
+                    multiple={true}
+                    value={toppings.map(topping => topping.id.toString())}
+                    onChange={handleToppingsChange}
+                >
+                    {allToppings?.map(topping => (
+                        <option key={topping.id} value={topping.id.toString()}>
+                            {topping.name}
+                        </option>
+                    ))}
+                </select>
 
-                    <select
-                        multiple={true}
-                        value={toppings.map(topping => topping.id.toString())}
-                        onChange={handleToppingsChange}
-                    >
-                        {allToppings?.map(topping => (
-                            <option key={topping.id} value={topping.id.toString()}>
-                                {topping.name}
-                            </option>
-                        ))}
-                    </select>
+                <select
+                    value={breadType}
+                    onChange={e => setBreadType(e.target.value)}
+                >
+                    <option value="oat">Oat</option>
+                    <option value="rye">Rye</option>
+                    <option value="wheat">Wheat</option>
+                </select>
 
-                    <select
-                        value={breadType}
-                        onChange={e => setBreadType(e.target.value)}
-                    >
-                        <option value="oat">Oat</option>
-                        <option value="rye">Rye</option>
-                        <option value="wheat">Wheat</option>
-                    </select>
+                <button
+                    className={flashPost ? 'flash' : ''}
+                    onClick={handleButtonClick}
+                    disabled={loading}
+                >
+                    Add Sandwich
+                </button>
+            </div>
 
-                    <button
-                        className={flashPost ? 'flash' : ''}
-                        onClick={handleButtonClick}
-                        disabled={loading}
-                    >
-                        Add Sandwich
-                    </button>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateRows: 'repeat(3, 25px)' }}>
-                    {loading && <div>Loading...</div>}
-                    {error && (<div>{`Problem adding sandwich: ${error.message}`}</div>)}
-                    {data && (
-                        <div>
-                            <table>
-                                <caption>Sandwich posted</caption>
-                                <thead>
-                                    <tr>
-                                        <th>SandwichId</th>
-                                        <th>Name</th>
-                                        <th>Toppings</th>
-                                        <th>Bread Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{data.id}</td>
-                                        <td>{data.name}</td>
-                                        <td>{data.toppings.map(topping => topping.name).join(', ')}</td>
-                                        <td>{data.breadType}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            </Protect>
+            <div style={{ display: 'grid', gridTemplateRows: 'repeat(3, 25px)' }}>
+                {loading && <div>Loading...</div>}
+                {error && (<div>{`Problem adding sandwich: ${error.message}`}</div>)}
+                {data && (
+                    <div>
+                        <table>
+                            <caption>Sandwich posted</caption>
+                            <thead>
+                                <tr>
+                                    <th>SandwichId</th>
+                                    <th>Name</th>
+                                    <th>Toppings</th>
+                                    <th>Bread Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{data.id}</td>
+                                    <td>{data.name}</td>
+                                    <td>{data.toppings.map(topping => topping.name).join(', ')}</td>
+                                    <td>{data.breadType}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

@@ -3,16 +3,16 @@
   aside {
     position: absolute;
     left: 150px;
-    height: 100vh;
+    height: calc(100vh - 80px);
     padding-top: 100px;
     background-color: #fff;
 
-    .cl-internal-17ydaof {
+    .cl-cardBox {
       box-shadow: none;
     }
 
-    .cl-internal-b3fm6y {
+    /* .cl-internal-b3fm6y {
       display: none;
-    }
+    } */
   }
 }
