@@ -1,11 +1,13 @@
 import React from 'react';
 import { SignUp } from '@clerk/nextjs';
 
-// Define generateStaticParams if you're using dynamic routing and SSG
-export async function generateStaticParams() {
-  return [
-    { signUp: [] }
-  ];
+export async function getStaticPaths() {
+  return {
+    paths: [
+      { params: { 'sign-up': [] } },
+    ],
+    fallback: false
+  };
 }
 
 export default function signUp() {

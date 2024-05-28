@@ -9,6 +9,8 @@ const nextConfig = {
       },
     ],
   },
+
+  ä
 };
 
 export default nextConfig;
