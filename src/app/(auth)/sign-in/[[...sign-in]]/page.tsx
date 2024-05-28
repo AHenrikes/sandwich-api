@@ -1,13 +1,10 @@
 import React from "react"
 import { SignIn } from "@clerk/nextjs"
 
-export async function getStaticPaths() {
-  return {
-    paths: [
-      { params: { 'sign-in': [] } },
-    ],
-    fallback: false
-  };
+export async function generateStaticParams() {
+  return [
+    { signIn: [] },
+  ];
 }
 
 export default function signIn() {
